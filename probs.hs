@@ -24,8 +24,8 @@ sol2 = sum $ filter (\x -> x `mod` 2 == 0) $ takeWhile (<4000000) fibStream
 sol3 :: Integer
 sol3 = maximum $ primeFactors 600851475143
 
-sol3_2 :: Integer
-sol3_2 = maximum $ mp primes 600851475143 1
+sol3' :: Integer
+sol3' = maximum $ mp primes 600851475143 1
   where mp (x:xs) n p = if p == n
                              then []
                              else if n `mod` x == 0
