@@ -141,6 +141,13 @@ sol14 = go [1..999999] Map.empty 0
                                             then go xs map x
                                             else go xs map max
 
+sol14' = go 2 0
+  where go 1000000 m = m
+        go i m = let c = collatzChain i in
+                     if c > m
+                        then go (i+1) c
+                        else go (i+1) m
+
 grid :: [[Integer]]
 grid = [ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
        , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
@@ -374,3 +381,28 @@ sol19 = go firstJan1901
         go (Date 31 Dec 2000 _) = 0
         go c@(Date 1 _ _ Sun) = 1 + (go $ next c)
         go c = go $ next c
+
+factorial :: Integral a => a -> a
+factorial 0 = 1
+factorial 1 = 1
+factorial n = n * factorial (n-1)
+
+sol20 = sum $ integerToList $ factorial 100
+
+properDivisors :: Int -> [Int]
+properDivisors n = 1 : go n 2 (ceiling $ sqrt $ fromIntegral n)
+  where go :: Int -> Int -> Int -> [Int]
+        go x c end = if c >= end
+                            then []
+                            else if x `mod` c == 0
+                              then c : (x `div` c : go x (c+1) end)
+                              else go x (c+1) end
+
+sol21 = sum $ go 2 Map.empty
+  where go 10000 m = []
+        go i m = let dn = sum $ properDivisors i in
+                     case Map.lookup i m of
+                       Nothing -> go (i+1) (Map.insert dn i m)
+                       Just b  -> if b == dn
+                                     then i : b : go (i+1) m
+                                     else go (i+1) (Map.insert dn i m)
