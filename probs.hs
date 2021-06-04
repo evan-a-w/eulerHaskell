@@ -180,7 +180,7 @@ movements y x arr = if val /= 0
                                   (res, set res y x arr2)
   where val = (arr!y)!x
 
--- Dynamic programming
+-- Memoized
 sol15 = fst $ movements 0 0 vGrid
 
 sol16 = sum $ integerToList (2^1000)
@@ -324,6 +324,7 @@ instance Enum Month where
 
 instance Enum WeekDay where
   toEnum i = case i of
+               0         -> Sun
                1         -> Mon
                2         -> Tue
                3         -> Wed
@@ -331,7 +332,7 @@ instance Enum WeekDay where
                5         -> Fri
                6         -> Sat
                7         -> Sun
-               otherwise -> toEnum ((i `mod` 8) + 1)
+               otherwise -> toEnum (i `mod` 7)
   fromEnum d = case d of
                  Mon  -> 1
                  Tue  -> 2
