@@ -4,6 +4,20 @@ import qualified Data.Vector as V
 import Data.Numbers.Primes
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
+import qualified Data.Set as Set
+import Data.Sort
+import Data.Char
+
+splitString :: String -> Char -> [String]
+splitString str d = map reverse $ reverse  $ sStr str d "" []
+
+sStr :: String -> Char -> String -> [String] -> [String]
+sStr "" d cs l = cs:l
+sStr (x:xs) d cs l = if x == d && cs /= "" 
+                        then sStr xs d "" (cs:l)
+                        else if x == d 
+                            then sStr xs d cs l
+                        else sStr xs d (x:cs) l
 
 sol1 :: Int
 sol1 = sum [x | x <- takeWhile (<1000) $ [3,6..] `union` [5,10..]]
@@ -406,3 +420,19 @@ sol21 = sum $ go 2 Map.empty
                        Just b  -> if b == dn
                                      then i : b : go (i+1) m
                                      else go (i+1) (Map.insert dn i m)
+
+readSplitSort :: IO [String]
+readSplitSort = do
+  s <- readFile "p022_names.txt"
+  let ss = sort $ splitString s ','
+  return ss
+
+alpVal :: String -> Integer
+alpVal = sum . (map (\x -> fromIntegral $ ord x - ord 'A' + 1))
+
+sol22 = do
+  nms <- readSplitSort
+  print $ go nms 1
+  where go :: [String] -> Integer -> Integer
+        go [] c = 0
+        go (x:xs) c =  c * alpVal x + (go xs (c+1))
