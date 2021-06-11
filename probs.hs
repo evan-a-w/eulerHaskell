@@ -4,6 +4,7 @@ import qualified Data.Vector as V
 import Data.Numbers.Primes
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
+import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Sort
 import Data.Char
@@ -403,14 +404,13 @@ factorial n = n * factorial (n-1)
 
 sol20 = sum $ integerToList $ factorial 100
 
-properDivisors :: Int -> [Int]
+properDivisors :: Integral a => a -> [a]
 properDivisors n = 1 : go n 2 (ceiling $ sqrt $ fromIntegral n)
-  where go :: Int -> Int -> Int -> [Int]
-        go x c end = if c >= end
-                            then []
-                            else if x `mod` c == 0
-                              then c : (x `div` c : go x (c+1) end)
-                              else go x (c+1) end
+  where go x c end = if c >= end
+                        then []
+                        else if x `mod` c == 0
+                          then c : (x `div` c : go x (c+1) end)
+                          else go x (c+1) end
 
 sol21 = sum $ go 2 Map.empty
   where go 10000 m = []
@@ -424,7 +424,7 @@ sol21 = sum $ go 2 Map.empty
 readSplitSort :: IO [String]
 readSplitSort = do
   s <- readFile "p022_names.txt"
-  let ss = sort $ splitString s ','
+  let ss = sort $ map (filter (/='\"')) (splitString s ',')
   return ss
 
 alpVal :: String -> Integer
@@ -436,3 +436,23 @@ sol22 = do
   where go :: [String] -> Integer -> Integer
         go [] c = 0
         go (x:xs) c =  c * alpVal x + (go xs (c+1))
+
+data FacClass = Deficient | Perfect | Abundant
+  deriving (Eq, Ord, Show)
+
+classify :: Integer -> FacClass
+classify n = case compare (sum (properDivisors n)) n of
+               LT -> Deficient
+               EQ -> Perfect
+               GT -> Abundant
+
+isAbundant :: Integral a => a -> Bool
+isAbundant n = n < (sum $ properDivisors n)
+
+abundantTill :: [Int]
+abundantTill = filter isAbundant [1..28123]
+
+posSums :: Set Int
+posSums = Set.fromList [x+y | x <- abundantTill, y <- abundantTill, x+y <= 28123]
+
+sol23 = sum $ filter (not . ((flip Set.member) posSums)) [1..28123]
