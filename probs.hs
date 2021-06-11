@@ -8,6 +8,8 @@ import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Sort
 import Data.Char
+import Data.List ((\\), union, permutations)
+import qualified Data.Vector.Algorithms.Intro as VA
 
 splitString :: String -> Char -> [String]
 splitString str d = map reverse $ reverse  $ sStr str d "" []
@@ -21,7 +23,7 @@ sStr (x:xs) d cs l = if x == d && cs /= ""
                         else sStr xs d (x:cs) l
 
 sol1 :: Int
-sol1 = sum [x | x <- takeWhile (<1000) $ [3,6..] `union` [5,10..]]
+sol1 = sum [x | x <- takeWhile (<1000) $ [3,6..] `Data.List.Ordered.union` [5,10..]]
 
 fibs :: Int -> Vector Integer
 fibs n = case n of
@@ -453,6 +455,21 @@ abundantTill :: [Int]
 abundantTill = filter isAbundant [1..28123]
 
 posSums :: Set Int
-posSums = Set.fromList [x+y | x <- abundantTill, y <- abundantTill, x+y <= 28123]
+posSums = Set.fromList [x+y | x <- abundantTill, y <- abundantTill]
 
+-- wrong answer for god knows what reason
 sol23 = sum $ filter (not . ((flip Set.member) posSums)) [1..28123]
+
+-- Too slow (still feasible tho - takes about 13 seconds to calculate all perms)
+perms :: Eq a => [a] -> [[a]]
+perms [] = []
+perms [x] = [[x]]
+perms xs = foldr f [] xs
+  where f x y = (map ((:)x) (perms (xs \\ [x]))) ++ y
+
+set24 = Set.fromList $ permutations "0123456789"
+
+-- "Only" 10! permutations
+-- Can definitely make it WAYYYY faster using combinatorics (TODO)
+-- Guess that it starts with 2 (or 3)
+sol24 = Set.elemAt 999999 set24
