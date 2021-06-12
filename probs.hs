@@ -8,7 +8,7 @@ import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Sort
 import Data.Char
-import Data.List ((\\), union, permutations)
+import Data.List ((\\), union, permutations, splitAt, elemIndex)
 import qualified Data.Vector.Algorithms.Intro as VA
 
 splitString :: String -> Char -> [String]
@@ -457,7 +457,7 @@ abundantTill = filter isAbundant [1..28123]
 posSums :: Set Int
 posSums = Set.fromList [x+y | x <- abundantTill, y <- abundantTill]
 
--- wrong answer for god knows what reason
+-- wrong answer for god knows what reason :((
 sol23 = sum $ filter (not . ((flip Set.member) posSums)) [1..28123]
 
 -- Too slow (still feasible tho - takes about 13 seconds to calculate all perms)
@@ -473,3 +473,35 @@ set24 = Set.fromList $ permutations "0123456789"
 -- Can definitely make it WAYYYY faster using combinatorics (TODO)
 -- Guess that it starts with 2 (or 3)
 sol24 = Set.elemAt 999999 set24
+
+dig1000 :: Integer
+dig1000 = 10^999
+
+sol25 = go 1 1 3
+  where go f s c = if f + s >= dig1000
+                      then c
+                      else go s (f + s) (c + 1)
+
+repeating :: Int -> Int -> Int
+repeating a b = decList a b 0 [] False
+  where decList :: Int -> Int -> Int -> [Int] -> Bool -> Int
+        decList a b c xs t = let i = a `div` b
+                                 m = a `mod` b in
+                                 case elemIndex a xs of
+                                   Just x  -> abs (x - c)
+                                   Nothing ->
+                                     if i == 0
+                                        then decList (a*10) b (if t then (c+1) else c) 
+                                                              (if t
+                                                                  then (xs++[0])
+                                                                  else xs)
+                                                     True
+                                        else if m == 0
+                                                then 0
+                                                else decList m b (c+1) (xs++[a]) False
+
+-- Also just a pattern that you can use that straight up gives the answer.
+sol26 = go 1 (1,0)
+  where go 1000 (m, mi) = mi
+        go x (m, mi) = let nm = repeating 1 x in
+                           go (x+1) (if nm > m then (nm, x) else (m, mi))
