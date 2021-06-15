@@ -8,7 +8,7 @@ import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Sort
 import Data.Char
-import Data.List ((\\), union, permutations, splitAt, elemIndex)
+import Data.List ((\\), union, permutations, splitAt, elemIndex, maximumBy)
 import qualified Data.Vector.Algorithms.Intro as VA
 
 splitString :: String -> Char -> [String]
@@ -505,3 +505,29 @@ sol26 = go 1 (1,0)
   where go 1000 (m, mi) = mi
         go x (m, mi) = let nm = repeating 1 x in
                            go (x+1) (if nm > m then (nm, x) else (m, mi))
+
+numConsPrimes :: Int -> Int -> Int
+numConsPrimes a b = go 0
+  where go n = if isPrime (n^2 + a*n + b)
+                  then go (n+1)
+                  else n
+
+-- n^2 + an + b where |a| < 1000, |b| <= 1000, max num of primes for
+-- n = 0,... 
+sol27 = (\(x,y,_) -> x*y) $ maximumBy (\(_,_,x) (_,_,y) -> compare x y)
+        [(a,b,numConsPrimes a b) | a <- [-999..999], b <- [-1000..1000]]
+
+-- Sum of the sequences gives this formula
+sol28 = sum $ [(3+2*n*(8*n*n+15*n+13))/3 | n <- [(1001-1)/2]]
+
+sol29 = foldr (\x y -> y + 1) 0 $ Set.fromList [a^b | a <- [2..100], b <- [2..100]]
+
+digList :: Integral a => a -> [a]
+digList i = go i []
+  where go 0 acc = acc
+        go x acc = go (x`div`10) ((x`mod`10) : acc)
+
+sol30 = go 1
+  where go 1000000 = 0
+        go n = (if (sum $ map (^5) (digList n)) == n then n else 0)
+               + go (n+1)
