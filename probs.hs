@@ -518,7 +518,7 @@ sol27 = (\(x,y,_) -> x*y) $ maximumBy (\(_,_,x) (_,_,y) -> compare x y)
         [(a,b,numConsPrimes a b) | a <- [-999..999], b <- [-1000..1000]]
 
 -- Sum of the sequences gives this formula
-sol28 = sum $ [(3+2*n*(8*n*n+15*n+13))/3 | n <- [(1001-1)/2]]
+sol28 = (\n -> (3+2*n*(8*n*n+15*n+13))/3) ((1001-1)/2)
 
 sol29 = foldr (\x y -> y + 1) 0 $ Set.fromList [a^b | a <- [2..100], b <- [2..100]]
 
