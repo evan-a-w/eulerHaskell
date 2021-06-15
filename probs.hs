@@ -1,4 +1,4 @@
-import Data.List.Ordered
+import qualified Data.List.Ordered as LO
 import Data.Vector (Vector, (!), (//))
 import qualified Data.Vector as V
 import Data.Numbers.Primes
@@ -23,7 +23,7 @@ sStr (x:xs) d cs l = if x == d && cs /= ""
                         else sStr xs d (x:cs) l
 
 sol1 :: Int
-sol1 = sum [x | x <- takeWhile (<1000) $ [3,6..] `Data.List.Ordered.union` [5,10..]]
+sol1 = sum [x | x <- takeWhile (<1000) $ [3,6..] `LO.union` [5,10..]]
 
 fibs :: Int -> Vector Integer
 fibs n = case n of
@@ -531,3 +531,55 @@ sol30 = go 1
   where go 1000000 = 0
         go n = (if (sum $ map (^5) (digList n)) == n then n else 0)
                + go (n+1)
+
+coins :: [Int]
+coins = [1,2,5,10,20,50,100,200]
+
+sol31 = undefined -- need to scribble stuff
+
+isPandigital :: Integral a => [a] -> Bool
+isPandigital xs = let n = length xs in
+                    foldr (\x y -> y && elem x xs) True [1..(fromIntegral n)]
+
+panProdT :: Integral a => a -> Bool
+panProdT x = 
+  let m = (ceiling $ sqrt $ fromIntegral x) + 1
+      ids = digList x in
+      go 2 m ids
+      where go i m ids = if i == m then False else
+                            let (q, r) = divMod x i in
+                                if r /= 0
+                                  then go (i+1) m ids
+                                  else let dq = digList q
+                                           dq2 = digList (x`div`q)
+                                           dl = concat [dq, dq2, ids] in
+                                           if length dl == 9 && isPandigital dl
+                                              then True
+                                              else go (i+1) m ids
+
+panProdTe :: Integral a => a -> (a,a,a)
+panProdTe x = 
+  let m = (ceiling $ sqrt $ fromIntegral x) + 1
+      ids = digList x in
+      go 2 m ids
+      where go i m ids = if i == m then (0,0,0) else
+                            let (q, r) = divMod x i in
+                                if r /= 0
+                                  then go (i+1) m ids
+                                  else let dq = digList q
+                                           dq2 = dq ++ digList (x`div`q)
+                                           dl = dq2 ++ ids in
+                                           if length dl == 9 && isPandigital dl
+                                              then (q, x`div`q, x)
+                                              else go (i+1) m ids
+sol32 :: Integer
+sol32 = product $ filter panProdT [4396..100000] -- Takes gazillion years
+
+sol32' :: Integer
+sol32' = Set.foldr (+) 0 $ Set.fromList [x*y | x <- [1..10000], y <- [1..10000], pred x y]
+  where pred a b = let tl = concat [digList a, digList b, digList (a*b)] in
+                       length tl == 9 && isPandigital tl
+
+maxi = head $ filter pred [(x,y,x*y) | x <- (reverse [1..10000]), y <- reverse ([1..10000])]
+  where pred (a,b,c) = let tl = concat [digList a, digList b, digList c] in
+                       length tl == 9 && isPandigital tl
