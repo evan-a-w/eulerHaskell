@@ -1,5 +1,7 @@
 module Main where
 
+import Probs
+
 main :: IO ()
 main = do
-  putStrLn "hello world"
+  print sol35
