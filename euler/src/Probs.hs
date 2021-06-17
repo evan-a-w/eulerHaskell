@@ -634,3 +634,20 @@ isCircularPrime n = (all isPrime) . (map (\x -> listDig $ rotate x ns)) $ [0..ln
         lns = length ns
 
 sol35 = length $ filter isCircularPrime $ takeWhile (<1000000) primes
+
+intToBS :: Int -> String
+intToBS i = stringify $ go i
+  where stringify [] = ""
+        stringify [x] = '1' : replicate x '0'
+        stringify (x:xs) = '1' : (replicate (x-(head xs)-1) '0') ++ (stringify xs)
+        go 0 = []
+        go 1 = [0]
+        go i = let p = head $ dropWhile (\x -> 2^(x+1) <= i) [1..] in
+                   p : go (i - 2^p)  
+
+doubleBase :: Int -> Bool
+doubleBase i = let dl = digList i
+                   bs = intToBS i in
+                   dl == reverse dl && bs == reverse bs
+
+sol36 = sum $ filter doubleBase [1..999999]
