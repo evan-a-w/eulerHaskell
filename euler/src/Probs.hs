@@ -651,3 +651,52 @@ doubleBase i = let dl = digList i
                    dl == reverse dl && bs == reverse bs
 
 sol36 = sum $ filter doubleBase [1..999999]
+
+tEnd [] = []
+tEnd [x] = []
+tEnd (x:xs) = x : tEnd xs
+
+trunLeft :: Integral a => [a] -> Bool
+trunLeft [] = True
+trunLeft xs = let n = listDig xs in
+                  if isPrime n
+                     then trunLeft $ tail xs
+                     else False
+
+trunRight :: Integral a => [a] -> Bool
+trunRight [] = True
+trunRight xs = let n = listDig xs in
+                   if isPrime n
+                      then trunRight $ tEnd xs
+                      else False
+
+trunPrime x = let dx = digList x in
+                  trunLeft dx && trunRight dx
+
+sol37 = go (drop 4 primes) 0
+  where go _ 11  = 0
+        go (x:xs) c = if trunPrime x
+                         then x + go xs (c+1)
+                         else go xs c
+
+concatProd :: Int -> Maybe Int
+concatProd i = go 1 []
+  where go c acc = case compare (length acc) 9 of
+                     EQ -> if isPandigital acc
+                              then Just (listDig acc)
+                              else Nothing
+                     LT -> go (c+1) (concat $ acc : [digList(c * i)])
+                     GT -> Nothing
+
+sol38 = go 1 0
+  where go 999999 m = m
+        go c m = case concatProd c of
+                   Just n -> go (c+1) (if n > m then n else m)
+                   Nothing -> go (c+1) m
+
+pythTripsSet = Set.fromList $ map (Set.fromList . il) pythTrips
+  where il (x,y,z) = [x,y,z]
+
+numSols i = (i, Set.size $ Set.filter (\x -> foldr (+) 0 x == i) pythTripsSet)
+
+sol39 = fst $ maximumBy (\(_,x) (_,y) -> compare x y) $ map numSols [1..1000]
