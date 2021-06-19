@@ -758,3 +758,17 @@ isPandigital09 xs = let n = length xs in
 
 sol43 :: Integer
 sol43 = sum $ map listDig $ filter prop43 $ permutations [0,1,2,3,4,5,6,7,8,9]
+
+pentNums :: Integral a => [a]
+pentNums = map (\x -> x*(3*x-1)`div`2) [1..]
+
+pentSet :: Integral a => Int -> Set a
+pentSet n = Set.fromList $ take n pentNums
+
+peen = take 1000000 pentNums
+
+pentPairs = filter (\(x,y,z) -> elem (x+y) peen && elem z peen) $ 
+              map (\(x,y) -> (x,y,abs(x-y))) $ 
+              zipWith (,) peen peen
+
+sol44 = minimumBy (\(x,y,z) (a,b,c) -> compare z c) pentPairs
