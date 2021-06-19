@@ -759,16 +759,96 @@ isPandigital09 xs = let n = length xs in
 sol43 :: Integer
 sol43 = sum $ map listDig $ filter prop43 $ permutations [0,1,2,3,4,5,6,7,8,9]
 
-pentNums :: Integral a => [a]
-pentNums = map (\x -> x*(3*x-1)`div`2) [1..]
+pent :: Integral a => a -> a
+pent = \x -> x*(3*x-1)`div`2
 
-pentSet :: Integral a => Int -> Set a
-pentSet n = Set.fromList $ take n pentNums
+isPent :: Integral a => a -> Bool
+isPent x = let sqr = sqrt $ fromIntegral x * 24.0 + 1 in
+               sqr >= 5 && isInteger sqr && (round sqr)`rem`6 == 5
 
-peen = take 1000000 pentNums
+sumAndDiffPent :: (Int,Int) -> Bool
+sumAndDiffPent (j,k) = let jp = pent(j)
+                           kp = pent(k) in
+                           all isPent $ [kp-jp,kp+jp]
 
-pentPairs = filter (\(x,y,z) -> elem (x+y) peen && elem z peen) $ 
-              map (\(x,y) -> (x,y,abs(x-y))) $ 
-              zipWith (,) peen peen
+findPentsWithSum :: Int -> Maybe (Int,Int)
+findPentsWithSum s = go (1,2)
+  where go (x,y) = case compare (pent(y)-pent(x)) s of
+                     GT -> if y-x == 1
+                              then Nothing
+                              else go (x+1,y)
+                     EQ -> if isPent $ pent(y)+pent(x)
+                              then Just (x,y)
+                              else if y-x == 1
+                                   then go (1,y+1)
+                                   else go (x+1,y)
+                     LT -> go (1,y+1) 
 
-sol44 = minimumBy (\(x,y,z) (a,b,c) -> compare z c) pentPairs
+-- 2 mins 40, didn't optimise the amount of numbers taken.
+sol44 = minimumBy (\(_,_,x) (_,_,y) -> compare x y) $ map dpent $ take 100000 $ filter sumAndDiffPent $ [(x,y) | y <- [1..100000], x <- [1..1000000], x < y]
+  where dpent(x,y) = (x,y,pent(y)-pent(x))
+
+-- Gazillion years
+sol44' = go $ map pent [1..]
+  where go (x:xs) = case findPentsWithSum x of
+                      Nothing -> go xs
+                      Just (x,y) -> (x,y,pent(y)-pent(x))
+
+isHex :: Integral a => a -> Bool
+isHex x = let sqr = sqrt $ fromIntegral x * 8.0 + 1 in
+              isInteger sqr && (round sqr)`rem`4==3
+
+sol45 = head $ filter (\x -> isPent x && isHex x) $ dropWhile (<=40755) triangleNumbers
+
+goldBach :: Integral a => a -> Bool
+goldBach x = go primes 1
+  where go (y:ys) c = if y > x
+                         then False
+                         else case compare (y+2*c^2) x of
+                                   EQ -> True
+                                   GT -> go ys 1
+                                   LT -> go (y:ys) (c+1)
+
+-- 600 ms
+sol46 = go [5,7..]
+  where go (x:xs) = if isPrime x || goldBach x
+                       then go xs
+                       else x
+
+-- 500 ms
+sol47 = go 647
+  where pfs x = (length $ nub $ primeFactors x) == 4
+        go x = if all pfs [x..x+3] 
+                  then x
+                  else go $ x+1
+
+-- 400 ms
+sol48 = foldr (\x y -> (y + x^x)`rem`10000000000) 0 [1..1000]
+
+-- 400 ms
+sol49 = go $ filter (\x -> x <= 10000 && x >= 1000) primes
+  where isPerm :: Int -> Int -> Bool
+        isPerm a b = elem (digList b) $ permutations $ digList a
+        go :: [Int] -> Integer
+        go (x:xs) = if x == 1487 || x == 4817 || x == 8147
+                       then go xs
+                       else let nl = [x,x+3330,x+6660] in
+                            if all (\z -> isPrime z && isPerm z x) nl
+                               then listDig $ concat $ map (digList.fromIntegral) nl
+                               else go xs
+
+consPriSu :: Int -> Int
+consPriSu y = go primes 0 y
+  where cuup (x:xs) s c n = case compare s n of
+                              EQ -> Just c
+                              GT -> Nothing
+                              LT -> cuup xs (s+x) (c+1) n
+        go (x:xs) m n = if x > n
+                           then m
+                           else case cuup (x:xs) 0 0 n of
+                                  Just nm -> go xs (if nm > m then nm else m) n
+                                  Nothing -> go xs m n
+
+-- I think this solution is completely braindead but oh well. Took 1 min 30
+sol50 = maximumBy (\(_,x) (_,y) -> compare x y) $ map (\x -> (x,consPriSu(x))) $
+          takeWhile (<1000000) primes
