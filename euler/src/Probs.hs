@@ -12,6 +12,7 @@ import Data.Sort
 import Data.Char
 import Data.List
 import Data.Ratio
+import qualified Math.NumberTheory.Primes as T
 
 splitString :: String -> Char -> [String]
 splitString str d = map reverse $ reverse  $ sStr str d "" []
@@ -700,3 +701,19 @@ pythTripsSet = Set.fromList $ map (Set.fromList . il) pythTrips
 numSols i = (i, Set.size $ Set.filter (\x -> foldr (+) 0 x == i) pythTripsSet)
 
 sol39 = fst $ maximumBy (\(_,x) (_,y) -> compare x y) $ map numSols [1..1000]
+
+sol40 = product $ map go [1,10,100,1000,10000,100000,1000000] 
+  where frc = concat $ map show [1..]
+        go i = ord (frc !! (i-1)) - ord '0'
+
+sol41 :: Int
+sol41 = go 999999999
+  where go x = if isPrime x && isPandigital (digList x)
+                  then x
+                  else go $ x-1
+
+sol41' :: Int
+sol41' = go $ T.precPrime (999999999 :: Int)
+  where go x = if isPandigital ((digList.fromEnum) x)
+                  then fromEnum x
+                  else go $ pred x

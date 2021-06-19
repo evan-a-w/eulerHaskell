@@ -23,4 +23,5 @@ executable euler
                      , primes
                      , sort
                      , data-ordlist
+                     , arithmoi
   other-modules:       Probs

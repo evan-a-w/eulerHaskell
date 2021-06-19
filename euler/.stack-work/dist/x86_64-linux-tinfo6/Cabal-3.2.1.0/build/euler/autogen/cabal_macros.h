@@ -11,6 +11,17 @@
   (major1) == 0 && (major2) == 1 && (minor) <= 0)
 #endif /* MIN_VERSION_euler */
 
+/* package arithmoi-0.11.0.1 */
+#ifndef VERSION_arithmoi
+#define VERSION_arithmoi "0.11.0.1"
+#endif /* VERSION_arithmoi */
+#ifndef MIN_VERSION_arithmoi
+#define MIN_VERSION_arithmoi(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  11 || \
+  (major1) == 0 && (major2) == 11 && (minor) <= 0)
+#endif /* MIN_VERSION_arithmoi */
+
 /* package base-4.14.1.0 */
 #ifndef VERSION_base
 #define VERSION_base "4.14.1.0"
@@ -177,7 +188,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "euler-0.1.0.0-I223CgofSWnLXOtJM78UHA-euler"
+#define CURRENT_COMPONENT_ID "euler-0.1.0.0-GFfGmD7kmQwCaCjdMCGXgj-euler"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
