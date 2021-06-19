@@ -566,8 +566,11 @@ sol30 = go 1
         go n = (if (sum $ map (^5) (digList n)) == n then n else 0)
                + go (n+1)
 
-coins :: [Int]
-coins = [1,2,5,10,20,50,100,200]
+coinTypes :: [Int]
+coinTypes = [1,2,5,10,20,50,100,200]
+
+coins :: Map Int Int
+coins = Map.fromList [(1,1),(2,2),(3,2),(4,4),(5,6),(6,5)]
 
 sol31 = undefined -- need to scribble stuff
 
