@@ -706,12 +706,16 @@ sol40 = product $ map go [1,10,100,1000,10000,100000,1000000]
   where frc = concat $ map show [1..]
         go i = ord (frc !! (i-1)) - ord '0'
 
+-- Took a decent bit of time, close to 10 mins?
 sol41 :: Int
 sol41 = go 999999999
   where go x = if isPrime x && isPandigital (digList x)
                   then x
                   else go $ x-1
 
+-- Haven't timed but I assume its similar to other solution - no idea how the
+-- lib works out primes tho. If its trial division it should be exactly the same
+-- pretty much.
 sol41' :: Int
 sol41' = go $ T.precPrime (999999999 :: Int)
   where go x = if isPandigital ((digList.fromEnum) x)
