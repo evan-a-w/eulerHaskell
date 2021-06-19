@@ -147,7 +147,7 @@ numDivisors n = go n 2 (ceiling $ sqrt $ fromIntegral n)
                               then 2 + go x (c+1) end
                               else go x (c+1) end
 
-triangleNumbers :: [Integer]
+triangleNumbers :: Integral a => [a]
 triangleNumbers = scanl (+) 1 [2..]
 
 sol12 = head $ dropWhile pred triangleNumbers
@@ -724,3 +724,37 @@ sol41' = go $ T.precPrime (999999999 :: Int)
   where go x = if isPandigital ((digList.fromEnum) x)
                   then fromEnum x
                   else go $ pred x
+
+isTriangleWord :: String -> Bool
+isTriangleWord s = go triangleNumbers $ sum $ map (\x -> ord x - ord 'A' + 1) s
+  where go (x:xs) i = case compare x i of
+                        EQ -> True
+                        LT -> go xs i
+                        GT -> False
+
+sol42 = do
+  s <- readFile "p042_words.txt"
+  let ss = map (filter (/='\"')) (splitString s ',')
+  print $ length $ filter isTriangleWord ss
+
+slice :: (Int,Int) -> [b] -> [b]
+slice (s,e) = take (e-s+1) . drop s
+
+threeSliceBack :: Integral a =>  Int -> [a] -> a
+threeSliceBack p xs = listDig $ take 3 $ drop p xs
+
+prop43 :: Integral a => [a] -> Bool
+prop43 i = go 0
+  where go 7 = True
+        go x = if (threeSliceBack (x+1) i) `rem` (primes !! x) == 0
+                  then go (x+1)
+                  else False
+
+isPandigital09 :: Integral a => [a] -> Bool
+isPandigital09 xs = let n = length xs in
+                      if n /= 10
+                         then False
+                         else foldr (\x y -> y && elem x xs) True [0..9]
+
+sol43 :: Integer
+sol43 = sum $ map listDig $ filter prop43 $ permutations [0,1,2,3,4,5,6,7,8,9]
