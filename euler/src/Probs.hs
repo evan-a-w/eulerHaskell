@@ -852,3 +852,5 @@ consPriSu y = go primes 0 y
 -- I think this solution is completely braindead but oh well. Took 1 min 30
 sol50 = maximumBy (\(_,x) (_,y) -> compare x y) $ map (\x -> (x,consPriSu(x))) $
           takeWhile (<1000000) primes
+
+digVec = V.fromList . digList
