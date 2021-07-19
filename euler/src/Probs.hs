@@ -854,3 +854,5 @@ sol50 = maximumBy (\(_,x) (_,y) -> compare x y) $ map (\x -> (x,consPriSu(x))) $
           takeWhile (<1000000) primes
 
 digVec = V.fromList . digList
+
+sol56 = maximum $ map (sum . digList) [x^y | x <- [2..99], y <- [1..99]]
