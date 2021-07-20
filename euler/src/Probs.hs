@@ -856,3 +856,7 @@ sol50 = maximumBy (\(_,x) (_,y) -> compare x y) $ map (\x -> (x,consPriSu(x))) $
 digVec = V.fromList . digList
 
 sol56 = maximum $ map (sum . digList) [x^y | x <- [2..99], y <- [1..99]]
+
+sol57 = length $ filter (\x -> length (digList $ numerator x) > length (digList $ denominator x))
+        $ scanl (\acc _ -> 1 + (flipp (2 + acc))) (1 + 1 % 2) [2..1000]
+        where flipp x = (denominator x) % (numerator x)

@@ -4,4 +4,4 @@ import Probs
 
 main :: IO ()
 main = do
-  print sol56
+  print sol57
