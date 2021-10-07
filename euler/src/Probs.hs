@@ -13,6 +13,7 @@ import Data.Char
 import Data.List
 import Data.Ratio
 import qualified Math.NumberTheory.Primes as T
+import Debug.Trace
 
 splitString :: String -> Char -> [String]
 splitString str d = map reverse $ reverse  $ sStr str d "" []
@@ -857,6 +858,74 @@ digVec = V.fromList . digList
 
 sol56 = maximum $ map (sum . digList) [x^y | x <- [2..99], y <- [1..99]]
 
-sol57 = length $ filter (\x -> length (digList $ numerator x) > length (digList $ denominator x))
-        $ scanl (\acc _ -> 1 + (flipp (2 + acc))) (1 + 1 % 2) [2..1000]
-        where flipp x = (denominator x) % (numerator x)
+fastNumDigits :: Integral a => a -> a
+fastNumDigits = floor . (1+) . (logBase 10 . fromIntegral)
+
+numDigits = length . show 
+
+sol57 :: Integer
+sol57 = snd $
+        foldl' (\(b, c) _ -> let n  = go b
+                                 nc = if inc n then c + 1 else c
+                             in (n, nc))
+          (1 % 1, 0) [1..1000]
+  where go :: Ratio Integer -> Ratio Integer
+        go x  = (1 + (1 % 1) / (2 + (x - 1)))
+        inc x = ((numDigits . numerator) x) > ((numDigits . denominator) x)
+
+sol58 = go 7 8 13 [31, 37, 43] [18, 20, 22]
+  where go l tp td diags inc
+          | td > 10 * tp = l
+          | otherwise    = let ninc = map (+8) inc 
+                               news = zipWith (+) diags ninc
+                               ntp  = (length . (filter isPrime)) news + tp
+                           in go (l + 2) ntp (td + 4) news ninc
+
+concatPrime :: (Integral a, Show a) => a -> a -> Bool
+concatPrime x y = x /= y
+                  && ((isPrime. read) (show x ++ show y)) 
+                  && ((isPrime . read) (show y ++ show x))
+
+fastConcatPrime :: Integral a => a -> a -> Bool
+fastConcatPrime x y =    (isPrime (x + y * 10^(fastNumDigits x)))
+                      && (isPrime (y + x * 10^(fastNumDigits y)))
+
+pairs :: Eq a => [a] -> [(a, a)]
+pairs [] = []
+pairs xs = go xs []
+  where go [] acc = acc
+        go (y:ys) acc = go ys (go2 y xs acc)
+        go2 a [] acc = acc
+        go2 a (y:ys) acc = go2 a ys (if a /= y then (a, y):acc else acc)
+
+takeFour :: Integral a => [a] -> [[a]]
+takeFour ls = [[a, b, c, d] | a <- ls
+                            , b <- dropWhile (<=a) ls
+                            , c <- dropWhile (<=b) ls
+                            , d <- dropWhile (<=c) ls]
+
+takeFive :: Integral a => [a] -> [[a]]
+takeFive ls = [[a, b, c, d, e] | a <- ls
+                               , b <- dropWhile (<=a) ls
+                               , c <- dropWhile (<=b) ls
+                               , d <- dropWhile (<=c) ls
+                               , e <- dropWhile (<=d) ls
+              ]
+
+concatPrimeMem :: (Integral a, Show a) => Map (a, a) Bool -> (a, a) -> (Bool, Map (a, a) Bool)
+concatPrimeMem m (x, y) = case Map.lookup n m of
+                            Just b -> (b, m)
+                            Nothing -> (v, Map.insert n v m) 
+                              where v = ((isPrime. read) (show x ++ show y)) 
+                                        && ((isPrime . read) (show y ++ show x))
+  where n = if x > y then (y, x) else (x, y)
+
+sol60 = go init Map.empty
+  where go (x:xs) m = let (nv, nm) = foldl' (\(b, ma) n ->
+                                              let (cv, cm) = concatPrimeMem ma n
+                                              in (b && cv, cm))
+                                          (True, m) (pairs x)
+                      in if nv
+                            then x
+                            else go xs nm
+        init = takeFour $ takeWhile (<1000) primes
