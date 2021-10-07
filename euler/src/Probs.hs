@@ -898,6 +898,10 @@ pairs xs = go xs []
         go2 a [] acc = acc
         go2 a (y:ys) acc = go2 a ys (if a /= y then (a, y):acc else acc)
 
+exclPairs l = go l []
+  where go [] acc = acc
+        go (x:xs) acc = go xs ((((,)x) <$> xs) ++ acc)
+
 takeFour :: Integral a => [a] -> [[a]]
 takeFour ls = [[a, b, c, d] | a <- ls
                             , b <- dropWhile (<=a) ls
@@ -929,3 +933,39 @@ sol60 = go init Map.empty
                             then x
                             else go xs nm
         init = takeFour $ takeWhile (<1000) primes
+
+sol60' = sum $ go1 usedPrimes 
+  where usedPrimes = takeWhile (<30000) primes
+        primeMap :: Map Int (Set Int)
+        primeMap = conMap usedPrimes Map.empty
+        insertV v cv map = Map.insertWith Set.union cv (Set.fromList [v])
+                           (Map.insertWith Set.union v (Set.fromList [cv]) map)
+        conMap [] m = m
+        conMap (x:xs) m = let nm = foldr (\cv cm -> if concatPrime x cv
+                                                       then insertV x cv cm
+                                                       else cm
+                                         ) m xs
+                          in conMap xs nm
+        isPair (a, b) = case Map.lookup a primeMap of
+                       Nothing -> False
+                       Just l  -> Set.member b l
+        go1 (a:as) = case go2 [a] as of
+                       Nothing -> go1 as
+                       Just j  -> j
+        go2 _ [] = Nothing
+        go2 l (b:bs) = case go3 (b:l) bs of
+                         Nothing -> go2 l bs
+                         Just j  -> Just j
+        go3 _ [] = Nothing
+        go3 l (c:cs) = case go4 (c:l) cs of
+                           Nothing -> go3 l cs
+                           Just j  -> Just j
+        go4 _ [] = Nothing
+        go4 l (d:ds) = case go5 (d:l) ds of
+                           Nothing -> go4 l ds
+                           Just j  -> Just j
+        go5 _ []                           = Nothing
+        go5 l (e:es)
+          | ((all isPair) . exclPairs) (e:l) = Just (e:l)
+          | otherwise                      = go5 l es
+
