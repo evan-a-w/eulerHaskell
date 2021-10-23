@@ -29,12 +29,12 @@ version :: Version
 version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
-bindir     = "/home/evan/dev/euler_haskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/bin"
-libdir     = "/home/evan/dev/euler_haskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/lib/x86_64-linux-ghc-8.10.4/euler-0.1.0.0-GFfGmD7kmQwCaCjdMCGXgj-euler"
-dynlibdir  = "/home/evan/dev/euler_haskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/lib/x86_64-linux-ghc-8.10.4"
-datadir    = "/home/evan/dev/euler_haskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/share/x86_64-linux-ghc-8.10.4/euler-0.1.0.0"
-libexecdir = "/home/evan/dev/euler_haskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/libexec/x86_64-linux-ghc-8.10.4/euler-0.1.0.0"
-sysconfdir = "/home/evan/dev/euler_haskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/etc"
+bindir     = "/home/evan/dev/eulerHaskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/bin"
+libdir     = "/home/evan/dev/eulerHaskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/lib/x86_64-linux-ghc-8.10.4/euler-0.1.0.0-GFfGmD7kmQwCaCjdMCGXgj-euler"
+dynlibdir  = "/home/evan/dev/eulerHaskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/lib/x86_64-linux-ghc-8.10.4"
+datadir    = "/home/evan/dev/eulerHaskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/share/x86_64-linux-ghc-8.10.4/euler-0.1.0.0"
+libexecdir = "/home/evan/dev/eulerHaskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/libexec/x86_64-linux-ghc-8.10.4/euler-0.1.0.0"
+sysconfdir = "/home/evan/dev/eulerHaskell/euler/.stack-work/install/x86_64-linux-tinfo6/4602a94d4fe00886c5b83d0c61e9f614cba07eeb6b20b4ac6e4a7d4d422d29f5/8.10.4/etc"
 
 getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: IO FilePath
 getBinDir = catchIO (getEnv "euler_bindir") (\_ -> return bindir)

@@ -1,8 +1,8 @@
-/home/evan/dev/euler_haskell/euler/src/Probs.hs:
-  hash: 4ad01a03cdef19547ed898770587735e4c02145459fe29bc4830e7120506494b
-/home/evan/dev/euler_haskell/euler/src/Main.hs:
-  hash: dd05239a3fc2d8efa7079da66c3bc0f947f18d9ed0574ae0b7aa0a8589007091
-/home/evan/dev/euler_haskell/euler/euler.cabal:
-  hash: 7947c78ac284fe950adbd40747a7f743f938f7b28b88a397648b2012c3910fbb
-/home/evan/dev/euler_haskell/euler/README.md:
+/home/evan/dev/eulerHaskell/euler/src/Probs.hs:
+  hash: 0f314c3d45b16eb484d9e82e05fc4f6c97f16a27e347b685be1c449b0190e248
+/home/evan/dev/eulerHaskell/euler/README.md:
   hash: 2490bd22de299a4de583f39b087274679c4ac1a7e66fc7ddfe71715f75e6d690
+/home/evan/dev/eulerHaskell/euler/euler.cabal:
+  hash: de90a18a589446ff3f055ccba699f68c9865c73c69b5d97245e85afb4916d867
+/home/evan/dev/eulerHaskell/euler/src/Main.hs:
+  hash: 9458fb20003924c029cf57d550fc48a3ca09ad003454142cfba2c6b118af3bcb
