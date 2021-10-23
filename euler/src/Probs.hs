@@ -934,6 +934,7 @@ sol60 = go init Map.empty
                             else go xs nm
         init = takeFour $ takeWhile (<1000) primes
 
+-- Tried to make this fast enough but its not - rust impl works.
 sol60' = sum $ go1 usedPrimes 
   where usedPrimes = takeWhile (<30000) primes
         primeMap :: Map Int (Set Int)
@@ -969,3 +970,51 @@ sol60' = sum $ go1 usedPrimes
           | ((all isPair) . exclPairs) (e:l) = Just (e:l)
           | otherwise                      = go5 l es
 
+nextPerm :: Ord a => [a] -> [a]
+nextPerm xs
+  | null xs || pivotIndex == -1 = xs
+  | otherwise = prePivot ++ swapVal : swapWithPivot
+  where pivotIndex = length xs - length swap - 1
+        prePivot = take pivotIndex xs
+        pivotVal = xs !! pivotIndex
+        swapVal = foldl1 (\acc x -> if x > pivotVal then x else acc) swap
+        swapWithPivot = insert pivotVal . delete swapVal . reverse $ swap
+        swap = reverse . fmap fst 
+                       . takeWhile (uncurry (>=)) 
+                       . (<*>) zip (\ls -> head ls:ls) 
+                       . reverse $ xs
+
+allPerms :: Ord a => [a] -> [[a]]
+allPerms xs = take n $ iterate nextPerm $ sort xs
+  where l = length xs
+        n = factorial l
+
+benchmarkPerms = length $ permutations [1..11]
+
+isCube x = (round (fromIntegral x ** (1/3))) ^ 3 == x
+
+check :: Integer -> [Integer] -> Bool
+check c xs
+  | c > 3 = False
+  | otherwise = let nexs = nextPerm xs
+                    nc   = c + if (isCube . listDig) xs then 1 else 0 in
+                    if nexs == xs
+                       then nc == 3
+                       else check nc nexs
+
+-- for num in (1..)^3:
+-- insert (listDig . sort . digList num, 0) into map, or otherwise add 1 to the count
+-- if new count == 5 and nextPerm (digList num) == digList num, return; otherwise, continue
+
+sol62 :: Integer
+sol62 = go 2 Map.empty
+  where unwrap (Just x) = x
+        go :: Integer -> Map Integer Integer -> Integer
+        go x m = let digs = digList (x^3)
+                     d = (listDig.sort) digs
+                     waste = traceShow d d
+                     nm = Map.insertWith (+) d 1 m
+                     nv = unwrap $ Map.lookup d nm in
+                     if head (sort digs) /= 0 && nv == 5 -- && nextPerm digs == digs
+                        then d
+                        else go (x+1) nm
